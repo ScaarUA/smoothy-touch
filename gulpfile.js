@@ -26,10 +26,16 @@ gulp.task('compile:js', () => {
         .pipe(browserSync.stream());
 });
 
-gulp.task('dev', ['compile:css', 'compile:js'], () => {
+gulp.task('compile:html', () => {
+    return gulp.src('src/index.html')
+        .pipe(gulp.dest('dist/'))
+        .pipe(browserSync.stream());
+});
+
+gulp.task('dev', ['compile:css', 'compile:js', 'compile:html'], () => {
     browserSync.init({
         server: {
-            baseDir: './',
+            baseDir: './dist/',
             logLevel: 'debug',
             ghostMode: false
         }
@@ -37,11 +43,11 @@ gulp.task('dev', ['compile:css', 'compile:js'], () => {
 
     gulp.watch('src/**/*.sass', ['compile:css']);
     gulp.watch('src/**/*.js', ['compile:js']);
-    gulp.watch('index.html').on('change', browserSync.reload);
+    gulp.watch('src/index.html', ['compile:html']);
 });
 
-gulp.task('build', ['compile:css', 'compile:js'], () => {
-    return gulp.src(['dist/index.css', 'dist/smoothy-touch.js'])
+gulp.task('build', ['compile:css', 'compile:js', 'compile:html'], () => {
+    return gulp.src('dist/**/*')
         .pipe(size({
             title: 'SIZE OF',
             showFiles: true,
