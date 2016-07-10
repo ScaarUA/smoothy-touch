@@ -8,13 +8,30 @@
     <script src="smoothy-touch.js"></script>
 </head>
 <body>
-    <div class="sidebar"></div>
+    <div class="sidebar">
+        <div class="sdb-header"></div>
+        <ul class="sdb-list">
+            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
+            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
+            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
+            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
+            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
+            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
+            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
+            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
+            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
+            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
+        </ul>
+    </div>
+    <header class="header">
+        <button class="hamburger" onclick="sideBar.toggleSidebar()">=</button>
+    </header>
     <div class="some-content">
         <h1>Hello, I'm Smoothy Touch</h1>
         <h3>Swipe me from left to see what I can</h3>
     </div>
     <script>
-        smoothyTouch('.sidebar').sidebar({side: 'left', width: 85});
+        var sideBar = smoothyTouch('.sidebar').sidebar({side: 'left', width: 80});
     </script>
 </body>
 </html>

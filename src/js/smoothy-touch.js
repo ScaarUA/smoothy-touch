@@ -37,6 +37,9 @@ if (!window.smoothyTouch) {
             }
 
             _injectCustomParams(allParams, customParams);
+            var content = _elem.innerHTML;
+
+            _elem.innerHTML = '<div class="wrapper" style="width:'+ allParams.width +'">' + content + '</div><div class="backflip" onclick="sideBar.toggleSidebar()"></div>';
 
             _elem.changeTransform = function(coords, isEnd) {
                 coords.posX = coords.posX || 0;
@@ -45,7 +48,7 @@ if (!window.smoothyTouch) {
                 var newVal = 'translate3d(' + coords.posX + ',' + coords.posY + ',' + coords.posZ + ')';
 
                 if(isEnd) {
-                    this.children[0].style.transition = 'transform 0.3s';
+                    this.children[0].style.transition = 'transform 0.2s';
                 } else {
                     this.children[0].style.transition = 'none';
                 }
@@ -61,12 +64,12 @@ if (!window.smoothyTouch) {
                     }
                 }
                 if(isEnd) {
-                    this.children[1].style.transition = 'opacity 0.3s';
+                    this.children[1].style.transition = 'opacity 0.2s';
                     if(val === 0) {
                         var self = this;
                         timeout = setTimeout(function () {
                             self.children[1].style.visibility = 'hidden';
-                        }, 300);
+                        }, 200);
                     }
                 } else {
                     this.children[1].style.transition = 'none';
@@ -101,13 +104,13 @@ if (!window.smoothyTouch) {
             doc.addEventListener('touchcancel', touchend);
 
             var startTouch = null,
-                // startPos = 0,
                 curPos = -100,
                 newPos = 0,
                 inc = 0,
                 touchId = null,
                 customWidth = parseInt(allParams.width, 10),
-                measure = 0;
+                measure = 0,
+                isStarted = false;
 
             function touchstart(evt) {
                 curPos = _elem._getCurrentPosition().x;
@@ -118,10 +121,12 @@ if (!window.smoothyTouch) {
                 if(evt.touches[0].clientX > 15 && curPos === -100) {
                     return;
                 }
+                isStarted = true;
 
                 touchId = evt.touches[0].identifier;
                 startTouch = evt.touches[0].clientX;
                 measure = _getMeasure();
+                newPos = curPos;
             }
 
             function touchmove(evt) {
@@ -134,7 +139,6 @@ if (!window.smoothyTouch) {
 
                     inc = diff * 100 / measure;
                     newPos = inc + curPos;
-                    console.log(inc, curPos);
                     if(newPos > 0 || newPos < -100) {
                         return;
                     }
@@ -143,9 +147,11 @@ if (!window.smoothyTouch) {
                     _elem.changeOpacity(Math.abs(-100 - newPos) * allParams.maxOpacity / 100);
                 }
             }
-            function touchend(evt) {
+            function touchend() {
+                if(!isStarted) {
+                    return;
+                }
                 touchId = null;
-                // curPos = newPos;
                 if(newPos > -50) {
                     newPos = 0;
                 } else {
@@ -154,8 +160,26 @@ if (!window.smoothyTouch) {
                 _elem.changeTransform({posX: newPos + '%'}, true);
                 _elem.changeOpacity(Math.abs(-100 - newPos) * allParams.maxOpacity / 100, true);
                 curPos = newPos;
-
+                isStarted = false;
             }
+
+            function toggleSidebar() {
+                var posX = _elem._getCurrentPosition().x,
+                    pos;
+
+                if(posX === 0) {
+                    pos = -100;
+                } else {
+                    pos = 0;
+                }
+                _elem.changeTransform({posX: pos + '%'}, true);
+                _elem.changeOpacity(Math.abs(-100 - pos) * allParams.maxOpacity / 100, true);
+            }
+
+            return {
+                toggleSidebar: toggleSidebar
+                //TODO: remove sidebar
+            };
         }
 
         function getElement(elem) {
@@ -164,10 +188,6 @@ if (!window.smoothyTouch) {
             } else {
                 _elem = elem;
             }
-
-            var content = _elem.innerHTML;
-
-            _elem.innerHTML = '<div class="wrapper">' + content + '</div><div class="backflip"></div>';
 
             return {
                 sidebar: sidebar
