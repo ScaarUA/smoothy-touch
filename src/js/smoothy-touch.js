@@ -135,8 +135,9 @@ if (!window.smoothyTouch) {
                 measure = 0,
                 isStarted = false,
                 bodyEdgeLimit = 15,
-                edgeCase,
-                isBreaked = false;
+                edgeCase;
+                //prevPos,
+                //step;
 
             function touchstart(evt) {
                 if(!isLeft) {
@@ -164,6 +165,9 @@ if (!window.smoothyTouch) {
             }
 
             function touchmove(evt) {
+                //TODO: consider swipe speed
+                //step = prevPos - evt.changedTouches[0].clientX;
+                //prevPos = evt.changedTouches[0].clientX;
                 if(_activeId !== currentId) {
                     return;
                 }
