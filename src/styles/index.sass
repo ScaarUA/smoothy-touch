@@ -14,6 +14,7 @@ $accent-color: #FF5252
 body
   margin: 0
   padding: 0
+  font-family: 'Roboto', sans-serif
 
 .sidebarLeft, .sidebarRight
   background: $sidebar-background
@@ -21,7 +22,7 @@ body
 .sdb
 
   &-header
-    background: $light-primary-color
+    background: linear-gradient(45deg, $secondary-text, $divider)
     height: 200px
 
   &-list
@@ -39,9 +40,44 @@ body
       border: none
 
 .header
-  height: 200px
+  position: relative
+  height: 180px
   background: $primary-color
   box-shadow: 0 2px 6px rgba(0,0,0,0.2)
 
+  &__title
+    position: absolute
+    bottom: 0
+    left: 17%
+    font-size: 28px
+    color: $sidebar-background
+    margin: 10px 0
+
+  &__button
+    position: absolute
+    bottom: 0
+    transform: translateY(50%)
+    right: 20px
+    width: 50px
+    font-size: 24px
+    height: 50px
+    outline: none
+    border: none
+    border-radius: 50%
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2)
+    background: $accent-color
+    color: $sidebar-background
+
 .hamburger
-  float: right
+  position: relative
+  left: 20px
+  top: 20px
+  padding: 5px
+  height: auto
+  width: 22px
+  cursor: pointer
+
+  &-line
+    padding: 2px 0
+    height: 1px
+    border-bottom: 2px solid $primary-text

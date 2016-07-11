@@ -60,12 +60,12 @@ if (!window.smoothyTouch) {
             sidebar.style.zIndex = 100;
             sidebar.style.position = 'relative';
             sidebar.style.height = '100%';
-            sidebar.innerHTML = '<div class="wrapper" style="width:'+ allParams.width + ';transform: translate3d('+ initialPos +'%,0,0);position: fixed;'+ allParams.side +':0;top: 0;z-index: 10;height: 100vh;will-change: transform;overflow-y: scroll;-webkit-overflow-scrolling: touch;-webkit-backface-visibility: hidden;background:'+ bg +'">'
+            sidebar.innerHTML = '<div class="wrapper" style="width:'+ allParams.width + ';transform: translate3d('+ initialPos +'%,0,0);position: fixed;'+ allParams.side +':0;top: 0;z-index: 10;height: 100vh;will-change: transform;overflow-y: auto;-webkit-overflow-scrolling: touch;-webkit-backface-visibility: hidden;background:'+ bg +'">'
                 + content
                 + '</div><div class="backflip'+ currentId +'"style="position:fixed;top:0;left:0;right:0;bottom:0;background:black;opacity:0;visibility:hidden;will-change:opacity;transform:translate3d(0,0,0);-webkit-backface-visibility:hidden;"></div>';
 
             document.querySelector('.backflip' + currentId).addEventListener('click', function () {
-                toggleSidebar();
+                toggle();
             });
 
             function disableSidebar() {
@@ -223,7 +223,7 @@ if (!window.smoothyTouch) {
                 isStarted = false;
             }
 
-            function toggleSidebar() {
+            function toggle() {
                 var posX = sidebar._getCurrentPosition().x,
                     pos;
 
@@ -237,7 +237,7 @@ if (!window.smoothyTouch) {
             }
 
             return {
-                toggleSidebar: toggleSidebar,
+                toggle: toggle,
                 disable: disableSidebar,
                 enable: enableSidebar
             };

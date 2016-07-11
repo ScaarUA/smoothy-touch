@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Smoothy Touch</title>
     <link rel="stylesheet" href="index.css">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,300,400italic&subset=latin,cyrillic-ext' rel='stylesheet' type='text/css'>
     <script src="smoothy-touch.js"></script>
 </head>
 <body>
@@ -24,32 +25,23 @@
         </ul>
     </div>
     <div class="sidebarRight">
-        <div class="sdb-header"></div>
-        <ul class="sdb-list">
-            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
-            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
-            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
-            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
-            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
-            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
-            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
-            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
-            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
-            <li class="sdb-list__item"><a href="#" class="sdb-list__item-link">Menu Item</a></li>
-        </ul>
+
     </div>
     <header class="header">
-        <button class="hamburger" onclick="sideBarLeft.toggleSidebar()">=L</button>
-        <button class="hamburger" onclick="sideBarRight.toggleSidebar()">=R</button>
+        <div class="hamburger" onclick="sideBarLeft.toggle()">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+        </div>
+        <h2 class="header__title">Smoothy Touch</h2>
+        <button class="header__button">+</button>
     </header>
     <div class="some-content">
-        <h1>Hello, I'm Smoothy Touch</h1>
-        <h3>Swipe me from left to see what I can</h3>
-        <button onclick="sideBarLeft.disable()">Remove left sidebar</button>
+
     </div>
     <script>
         var sideBarLeft = smoothyTouch('.sidebarLeft').sidebar({side: 'left', width: 80});
-        var sideBarRight = smoothyTouch('.sidebarRight').sidebar({side: 'right', width: 80});
+        var sideBarRight = smoothyTouch('.sidebarRight').sidebar({side: 'right', width: 20});
     </script>
 </body>
 </html>
