@@ -8,7 +8,7 @@ if (!window.smoothyTouch) {
         function _injectCustomParams(dest, inp) {
             for(var key in dest) {
                 if(dest.hasOwnProperty(key)) {
-                    if(inp[key]) {
+                    if(inp[key] !== undefined) {
                         dest[key] = inp[key];
                     }
                 }
@@ -33,7 +33,8 @@ if (!window.smoothyTouch) {
             var allParams = {
                 side: 'left',
                 width: '90%',
-                maxOpacity: 0.5
+                maxOpacity: 0.5,
+                shadow: true
             },
                 timeout;
 
@@ -60,7 +61,7 @@ if (!window.smoothyTouch) {
             sidebar.style.zIndex = 100;
             sidebar.style.position = 'relative';
             sidebar.style.height = '100%';
-            sidebar.innerHTML = '<div class="wrapper" style="width:'+ allParams.width + ';transform: translate3d('+ initialPos +'%,0,0);position: fixed;'+ allParams.side +':0;top: 0;z-index: 10;height: 100vh;will-change: transform;overflow-y: auto;-webkit-overflow-scrolling: touch;-webkit-backface-visibility: hidden;background:'+ bg +'">'
+            sidebar.innerHTML = '<div class="wrapper" style="width:'+ allParams.width + ';transform: translate3d('+ initialPos +'%,0,0);position: fixed;'+ allParams.side +':0;top: 0;z-index: 10;height: 100vh;will-change:transform,box-shadow;overflow-y: auto;-webkit-overflow-scrolling: touch;-webkit-backface-visibility: hidden;background:'+ bg +'">'
                 + content
                 + '</div><div class="backflip'+ currentId +'"style="position:fixed;top:0;left:0;right:0;bottom:0;background:black;opacity:0;visibility:hidden;will-change:opacity;transform:translate3d(0,0,0);-webkit-backface-visibility:hidden;"></div>';
 
@@ -126,6 +127,17 @@ if (!window.smoothyTouch) {
                     x: parseFloat(coords[0]),
                     y: parseFloat(coords[1]),
                     z: parseFloat(coords[2])
+                }
+            };
+
+            sidebar._toggleShadow = function (isShadowed) {
+                if(allParams.shadow) {
+                    var wrap = sidebar.children[0];
+
+                    if(!isShadowed) {
+                        return wrap.style.boxShadow = '0 0 24px rgba(0,0,0,0.5)';
+                    }
+                    return wrap.style.boxShadow = null;
                 }
             };
 
@@ -201,6 +213,7 @@ if (!window.smoothyTouch) {
                         return;
                     }
 
+                    sidebar._toggleShadow();
                     sidebar.changeTransform({posX: newPos + '%'});
                     sidebar.changeOpacity(Math.abs(initialPos - newPos) * allParams.maxOpacity / 100);
                 }
@@ -216,6 +229,7 @@ if (!window.smoothyTouch) {
                 } else {
                     newPos = initialPos;
                     _activeId = null;
+                    sidebar._toggleShadow(true);
                 }
                 sidebar.changeTransform({posX: newPos + '%'}, true);
                 sidebar.changeOpacity(Math.abs(initialPos - newPos) * allParams.maxOpacity / 100, true);
@@ -229,8 +243,10 @@ if (!window.smoothyTouch) {
 
                 if(posX === 0) {
                     pos = initialPos;
+                    sidebar._toggleShadow(true);
                 } else {
                     pos = 0;
+                    sidebar._toggleShadow();
                 }
                 sidebar.changeTransform({posX: pos + '%'}, true);
                 sidebar.changeOpacity(Math.abs(initialPos - pos) * allParams.maxOpacity / 100, true);
