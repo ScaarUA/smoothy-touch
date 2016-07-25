@@ -28,7 +28,8 @@ if (!window.smoothyTouch) {
 
         function sidebar(customParams) {
             var sidebar = _elem,
-                currentId = counter++;
+                currentId = counter++,
+                _isOpened;
 
             var allParams = {
                 side: 'left',
@@ -51,17 +52,15 @@ if (!window.smoothyTouch) {
                 isLeft = allParams.side === 'left',
                 initialPos = -100,
                 bg = getComputedStyle(sidebar, null).getPropertyValue('background');
-            console.log(bg);
 
             if(!isLeft) {
                 initialPos = 100;
             }
 
             //TODO: Support px also
-            sidebar.style.zIndex = 100;
-            sidebar.style.position = 'relative';
-            sidebar.style.height = '100%';
-            sidebar.innerHTML = '<div class="wrapper" style="width:'+ allParams.width + ';transform: translate3d('+ initialPos +'%,0,0);position: fixed;'+ allParams.side +':0;top: 0;z-index: 10;height: 100vh;will-change:transform,box-shadow;overflow-y: auto;-webkit-overflow-scrolling: touch;-webkit-backface-visibility: hidden;background:'+ bg +'">'
+            sidebar.style.zIndex = 1001;
+            sidebar.style.position = 'absolute';
+            sidebar.innerHTML = '<div class="wrapper" style="width:'+ allParams.width + ';transform: translate3d('+ initialPos +'%,0,0);-webkit-transform: translate3d('+ initialPos +'%,0,0);position: fixed;'+ allParams.side +':0;top: 0;z-index: 10;height: 100vh;will-change:transform,box-shadow;overflow-y: auto;-webkit-overflow-scrolling: touch;-webkit-backface-visibility: hidden;background:'+ bg +'">'
                 + content
                 + '</div><div class="backflip'+ currentId +'"style="position:fixed;top:0;left:0;right:0;bottom:0;background:black;opacity:0;visibility:hidden;will-change:opacity;transform:translate3d(0,0,0);-webkit-backface-visibility:hidden;"></div>';
 
@@ -90,9 +89,10 @@ if (!window.smoothyTouch) {
                 var newVal = 'translate3d(' + coords.posX + ',' + coords.posY + ',' + coords.posZ + ')';
 
                 if(isEnd) {
-                    this.children[0].style.transition = 'transform 0.2s';
+                    this.children[0].style.WebkitTransitionDuration = '0.2s';
+                    this.children[0].style.WebkitTransitionProperty = 'transform, -webkit-transform';
                 } else {
-                    this.children[0].style.transition = 'none';
+                    this.children[0].style.WebkitTransitionDuration = '0s';
                 }
                 return this.children[0].style.webkitTransform = newVal;
             };
@@ -106,7 +106,7 @@ if (!window.smoothyTouch) {
                     }
                 }
                 if(isEnd) {
-                    this.children[1].style.transition = 'opacity 0.2s';
+                    this.children[1].style.WebkitTransition = 'opacity 0.2s';
                     if(val === 0) {
                         var self = this;
                         timeout = setTimeout(function () {
@@ -114,13 +114,13 @@ if (!window.smoothyTouch) {
                         }, 200);
                     }
                 } else {
-                    this.children[1].style.transition = 'none';
+                    this.children[1].style.WebkitTransition = 'none';
                 }
                 return this.children[1].style.opacity = val;
             };
 
             sidebar._getCurrentPosition = function() {
-                var coords = this.children[0].style.transform.match(/-?\d(?!d)[\.\d]*/g);
+                var coords = this.children[0].style.webkitTransform.match(/-?\d(?!d)[\.\d]*/g);
                 coords = coords || [];
 
                 return {
@@ -152,7 +152,7 @@ if (!window.smoothyTouch) {
 
             enableSidebar();
 
-            var startTouch = null,
+            var startEvt = null,
                 curPos,
                 newPos = 0,
                 inc = 0,
@@ -161,9 +161,8 @@ if (!window.smoothyTouch) {
                 measure = 0,
                 isStarted = false,
                 bodyEdgeLimit = 15,
-                edgeCase;
-                //prevPos,
-                //step;
+                edgeCase,
+                isDown;
 
             function touchstart(evt) {
                 if(!isLeft) {
@@ -185,15 +184,13 @@ if (!window.smoothyTouch) {
                 isStarted = true;
 
                 touchId = evt.touches[0].identifier;
-                startTouch = evt.touches[0].clientX;
+                startEvt = evt;
                 measure = _getMeasure();
                 newPos = curPos;
             }
 
             function touchmove(evt) {
                 //TODO: consider swipe speed
-                //step = prevPos - evt.changedTouches[0].clientX;
-                //prevPos = evt.changedTouches[0].clientX;
                 if(_activeId !== currentId) {
                     return;
                 }
@@ -202,9 +199,21 @@ if (!window.smoothyTouch) {
                     if(evt.changedTouches[i].identifier !== touchId) {
                         return;
                     }
-                    var diff = evt.changedTouches[i].clientX - startTouch;
+                    var diffX = evt.changedTouches[i].clientX - startEvt.touches[0].clientX,
+                        diffY = evt.changedTouches[i].clientY - startEvt.touches[0].clientY;
+                    if(isDown === null) {
+                        isDown = Math.abs(diffX) <= Math.abs(diffY);
+                    }
 
-                    inc = diff * 100 / measure;
+                    if(isDown === false) {
+                        evt.preventDefault();
+                    }
+
+                    if(isDown === true) {
+                        return;
+                    }
+
+                    inc = diffX * 100 / measure;
                     newPos = inc + curPos;
                     if(isLeft && (newPos > 0 || newPos < initialPos)) {
                         return;
@@ -219,6 +228,7 @@ if (!window.smoothyTouch) {
                 }
             }
             function touchend() {
+                isDown = null;
                 if(!isStarted) {
                     return;
                 }
@@ -226,9 +236,11 @@ if (!window.smoothyTouch) {
                 if((isLeft && newPos > initialPos/2) || (!isLeft && newPos < initialPos/2)) {
                     newPos = 0;
                     _activeId = currentId;
+                    _isOpened = true;
                 } else {
                     newPos = initialPos;
                     _activeId = null;
+                    _isOpened = false;
                     sidebar._toggleShadow(true);
                 }
                 sidebar.changeTransform({posX: newPos + '%'}, true);
@@ -244,18 +256,26 @@ if (!window.smoothyTouch) {
                 if(posX === 0) {
                     pos = initialPos;
                     sidebar._toggleShadow(true);
+                    _isOpened = false;
                 } else {
                     pos = 0;
                     sidebar._toggleShadow();
+                    _isOpened = true;
                 }
+
                 sidebar.changeTransform({posX: pos + '%'}, true);
                 sidebar.changeOpacity(Math.abs(initialPos - pos) * allParams.maxOpacity / 100, true);
+            }
+
+            function isOpened() {
+                return _isOpened;
             }
 
             return {
                 toggle: toggle,
                 disable: disableSidebar,
-                enable: enableSidebar
+                enable: enableSidebar,
+                isOpened: isOpened
             };
         }
 
